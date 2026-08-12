@@ -11,6 +11,6 @@ COPY --from=build /app/publish .
 # Prevent file watcher from exceeding inotify limits on Linux containers
 ENV DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false
 
-ENV ASPNETCORE_URLS=http://+:8080
+ENV ASPNETCORE_URLS=http://0.0.0.0:8080
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "backend.dll"]

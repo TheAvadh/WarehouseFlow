@@ -4,9 +4,6 @@ using WarehouseFlow.Backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Ensure the application listens on http://localhost:5000
-builder.WebHost.UseUrls("http://localhost:5000");
-
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -14,7 +11,7 @@ builder.Services.AddSwaggerGen();
 
 // Configure SQLite DbContext
 builder.Services.AddDbContext<WarehouseDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") 
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")
         ?? "Data Source=warehouseflow.db"));
 
 // Register QuickBooks Integration Service
