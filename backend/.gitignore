@@ -1,0 +1,31 @@
+## --- .NET & C# Build Artifacts ---
+[Bb]in/
+[Oo]bj/
+[LPl]og/
+[Ll]ogs/
+*.user
+*.userosscache
+*.sln.docstates
+
+## --- Databases ---
+*.db
+*.db-shm
+*.db-wal
+
+## --- Environment & Secret Files ---
+appsettings.Development.json
+appsettings.Production.json
+*.secrets.json
+.env
+
+## --- IDE & Editor Settings ---
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userprefs
+
+## --- OS Generated Files ---
+.DS_Store
+Thumbs.db
