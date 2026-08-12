@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WarehouseFlow.Backend.Data;
 using WarehouseFlow.Backend.Services;
+using WarehouseFlow.Backend.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,12 @@ builder.Services.AddDbContext<WarehouseDbContext>(options =>
 
 // Register QuickBooks Integration Service
 builder.Services.AddScoped<IQuickBooksService, QuickBooksService>();
+
+// Bind QuickBooks Settings from appsettings or Environment Variables
+builder.Services.Configure<QuickBooksSettings>(builder.Configuration.GetSection("QuickBooks"));
+
+// Register QuickBooksService as a Typed HttpClient Service
+builder.Services.AddHttpClient<IQuickBooksService, QuickBooksService>();
 
 // Global CORS policy allowing any origin, header, and method
 builder.Services.AddCors(options =>
