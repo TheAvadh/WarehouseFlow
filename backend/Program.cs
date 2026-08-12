@@ -45,11 +45,13 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Enable Swagger UI in development and production for easy API testing
+// Enable Swagger UI in ALL environments (including Production on Render)
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "WarehouseFlow API v1");
-    c.RoutePrefix = "swagger";
+    // Serving Swagger at the root URL (https://warehouseflow-10jo.onrender.com/)
+    c.RoutePrefix = string.Empty;
 });
 
 app.UseCors("AllowAll");
