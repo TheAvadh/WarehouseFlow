@@ -1,6 +1,6 @@
 import type { DashboardData, Order, Customer, Product, CreateOrderInput } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://warehouseflow-10jo.onrender.com/';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://warehouseflow-10jo.onrender.com/api/';
 
 export default API_BASE_URL;
 export class ApiError extends Error {
