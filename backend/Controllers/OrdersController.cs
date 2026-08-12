@@ -218,11 +218,18 @@ public class OrdersController : ControllerBase
             return BadRequest(new { message = $"Cannot invoice order. Order status must be 'Shipped' or 'Invoiced', but is currently '{order.Status}'." });
         }
 
-        var invoiceId = await _quickBooksService.GenerateInvoiceAsync(order);
-        order.Status = OrderStatus.Invoiced;
-        await _context.SaveChangesAsync();
+        try
+        {
+            var invoiceId = await _quickBooksService.GenerateInvoiceAsync(order);
+            order.Status = OrderStatus.Invoiced;
+            await _context.SaveChangesAsync();
 
-        return Ok(MapToDto(order));
+            return Ok(MapToDto(order));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = $"QuickBooks Error: {ex.Message}" });
+        }
     }
 
     private static OrderDto MapToDto(Order order)
