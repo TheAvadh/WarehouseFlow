@@ -1,7 +1,8 @@
 import type { DashboardData, Order, Customer, Product, CreateOrderInput } from '../types';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://warehouseflow-10jo.onrender.com/api';
 
+export default API_BASE_URL;
 export class ApiError extends Error {
   status: number;
   constructor(message: string, status: number) {
@@ -43,7 +44,7 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     if (err instanceof ApiError) {
       throw err;
     }
-    throw new ApiError(err.message || 'Failed to connect to backend server. Make sure http://localhost:5000 is running.', 500);
+    throw new ApiError(err.message || 'Failed to connect to backend server. Make sure backend is running.', 500);
   }
 }
 

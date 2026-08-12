@@ -253,7 +253,7 @@ cd backend
 dotnet restore
 dotnet run
 ```
-- **Backend Port**: `http://localhost:5000`
+- **Backend Port**: `https://warehouseflow-10jo.onrender.com`
 - **Swagger Documentation**: `http://localhost:5000/swagger`
 - *Note: On initial startup, SQLite database `warehouseflow.db` is auto-created and populated with seed customers, products, and sample orders.*
 

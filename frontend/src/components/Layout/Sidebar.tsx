@@ -78,7 +78,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => 
           <Activity className="w-3.5 h-3.5 animate-pulse" />
           System Status
         </div>
-        <p className="text-[11px] text-slate-400">Backend API Online on :5000</p>
+        <p className="text-[11px] text-slate-400">Backend API Online on :https://warehouseflow-10jo.onrender.com</p>
       </div>
     </aside>
   );
