@@ -36,13 +36,15 @@ public class QuickBooksService : IQuickBooksService
 
         string docNumber = $"WF-ORD-{order.Id.ToString()[..8].ToUpper()}";
 
-        // 3. Build QuickBooks Invoice Payload
+        // 3. Build QuickBooks Invoice Payload with detailed Line Item descriptions
         var invoicePayload = new
         {
             DocNumber = docNumber,
             Line = order.OrderItems.Select(item => new
             {
                 Amount = item.Quantity * item.UnitPrice,
+                // Populates the "Description" column on the QBO Invoice
+                Description = $"{item.Product?.Name ?? "Warehouse Item"} (SKU: {item.Product?.SKU ?? "N/A"})",
                 DetailType = "SalesItemLineDetail",
                 SalesItemLineDetail = new
                 {
@@ -50,21 +52,26 @@ public class QuickBooksService : IQuickBooksService
                     UnitPrice = item.UnitPrice,
                     ItemRef = new
                     {
-                        value = "1",
+                        value = "1", // Default item reference in Intuit Sandbox
                         name = "Services"
                     }
                 }
             }).ToArray(),
             CustomerRef = new
             {
-                value = "1" // Default Sandbox Customer
+                value = "1" // Default Sandbox Customer ID
             }
         };
 
-        // 4. Send Invoice Creation Request
-        var requestUrl = $"{_settings.BaseUrl}/v3/company/{_settings.RealmId}/invoice?minorversion=65";
-        using var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+        // 4. Ensure BaseUrl is fallback-safe and properly formatted
+        string baseUrl = string.IsNullOrWhiteSpace(_settings.BaseUrl)
+            ? "https://sandbox-quickbooks.api.intuit.com"
+            : _settings.BaseUrl.TrimEnd('/');
 
+        string requestUrl = $"{baseUrl}/v3/company/{_settings.RealmId}/invoice?minorversion=65";
+
+        // 5. Send Invoice Creation Request
+        using var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         request.Content = new StringContent(JsonSerializer.Serialize(invoicePayload), Encoding.UTF8, "application/json");
@@ -77,20 +84,20 @@ public class QuickBooksService : IQuickBooksService
             throw new HttpRequestException($"QuickBooks API call failed [{response.StatusCode}]: {errorBody}");
         }
 
-        // 5. Extract Invoice ID from Response
+        // 6. Extract Internal Numeric Invoice ID from Response for Deep Linking
         var jsonResponse = await response.Content.ReadAsStringAsync();
         using var jsonDoc = JsonDocument.Parse(jsonResponse);
 
-        string invoiceId = jsonDoc.RootElement
+        string internalInvoiceId = jsonDoc.RootElement
             .GetProperty("Invoice")
             .GetProperty("Id")
-            .GetString() ?? throw new InvalidOperationException("Failed to parse Invoice ID.");
+            .GetString() ?? throw new InvalidOperationException("Failed to parse Invoice ID from QuickBooks response.");
 
-        // 6. Save Invoice ID to SQLite Database
-        order.QuickBooksInvoiceId = invoiceId;
+        // 7. Save QuickBooks Internal Invoice ID to SQLite Database
+        order.QuickBooksInvoiceId = internalInvoiceId;
         await _context.SaveChangesAsync();
 
-        return invoiceId;
+        return internalInvoiceId;
     }
 
     /// <summary>
