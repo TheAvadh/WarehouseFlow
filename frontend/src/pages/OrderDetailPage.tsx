@@ -7,7 +7,7 @@ import { OrderItemsTable } from '../components/Orders/OrderItemsTable';
 import { Badge } from '../components/UI/Badge';
 import { Button } from '../components/UI/Button';
 import { useToast } from '../components/UI/Toast';
-import { ArrowLeft, RefreshCw, User, Calendar, FileText } from 'lucide-react';
+import { ArrowLeft, RefreshCw, User, Calendar, FileText, ExternalLink } from 'lucide-react';
 
 interface OrderDetailPageProps {
   orderId: string;
@@ -61,6 +61,11 @@ export const OrderDetailPage: React.FC<OrderDetailPageProps> = ({ orderId, onBac
       </div>
     );
   }
+
+  // QuickBooks Sandbox Deep Link URL
+  const quickBooksInvoiceUrl = order.quickBooksInvoiceId
+    ? `https://app.sandbox.qbo.intuit.com/app/invoice?txnId=${order.quickBooksInvoiceId}`
+    : '#';
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
@@ -128,7 +133,14 @@ export const OrderDetailPage: React.FC<OrderDetailPageProps> = ({ orderId, onBac
             {order.quickBooksInvoiceId ? (
               <div>
                 <h4 className="text-base font-extrabold text-emerald-400 mt-1 font-mono">{order.quickBooksInvoiceId}</h4>
-                <p className="text-[11px] text-emerald-300/80 mt-0.5 font-medium">Synced & Invoiced</p>
+                <a
+                  href={quickBooksInvoiceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-[11px] text-emerald-400 hover:text-emerald-300 hover:underline mt-1 font-semibold transition-colors"
+                >
+                  View in QuickBooks <ExternalLink className="w-3 h-3" />
+                </a>
               </div>
             ) : (
               <div>
